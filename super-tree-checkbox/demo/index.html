@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en-GB">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <style>
+    body {
+      background: #fafafa;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="demo"></div>
+
+  <script type="module">
+    import { html, render } from 'lit';
+    import '../super-tree-checkbox.js';
+
+    const header = 'Hello owc World!';
+    const tree = [{
+      key: '1',
+      value: 'hello',
+      children: [{
+        key: '2',
+        value: 'word',
+        children: [{
+          key: '6',
+          value: 'hola',
+          children: [{
+            key: '7',
+            value: 'holga',
+          }]
+        },
+        {
+          key: '8',
+          value: 'hosa',
+          children: [{
+            key: '9',
+            value: 'hodlga',
+          }]
+        },
+        {
+          key: '10',
+          value: 'hosla',
+          children: [{
+            key: '11',
+            value: 'holdga',
+          }]
+        }]
+      }]
+    },
+    {
+      key: '3',
+      value: 'Amnah',
+      children: [{
+        key: '8',
+        value: 'Ibrahim',
+      }]
+    }]
+    render(
+      html`
+        <super-tree-checkbox .header=${header} .tree=${tree}>
+          some light-dom
+        </super-tree-checkbox>
+      `,
+      document.querySelector('#demo')
+    );
+  </script>
+</body>
+
+</html>
