@@ -28,8 +28,6 @@ export class SuperTreeCheckbox extends LitElement {
 
   render() {
     this.partialSelect();
-    // console.log(this.tree)
-    console.log(this.createDom())
     return html`${this.createDom()} `;
   }
 
@@ -43,8 +41,8 @@ export class SuperTreeCheckbox extends LitElement {
       const label = document.createElement("label");
       node.setAttribute("type", "checkbox");
       node.setAttribute("id", treeNode.key);
+      !treeNode.selected && (node.indeterminate = treeNode.partialSelect);
       node.checked = treeNode.selected;
-      console.log(node.checked , treeNode.value)
       label.setAttribute("for", treeNode.key);
       label.append(treeNode.value);
       div.append(node);
@@ -52,18 +50,25 @@ export class SuperTreeCheckbox extends LitElement {
       dom.append(div);
       node.onclick = this.nodeClicked.bind(this, treeNode);
       if (treeNode.children) {
+        treeNode.leaf = false;
         dom.append(this.createDom(treeNode.children, 10));
-      }
+      } else treeNode.leaf = true;
     }
     return dom;
   }
   nodeClicked(node) {
-    node.selected = !node.selected
-    if(node.selected && node.children)
+    node.selected = !node.selected;
+    this.clickNode(node, node.selected);
+    // this.partialSelect()
+    this.requestUpdate();
+  }
+  clickNode(node, select) {
+    node.selected = select;
+    node.partialSelect = false;
+    if (node.children)
       for (const child of node.children) {
-        child.selected = true
+        this.clickNode(child, select);
       }
-    this.render();
   }
   partialSelect(nodeTree = this.tree) {
     for (const treeNode of nodeTree) {
@@ -72,12 +77,18 @@ export class SuperTreeCheckbox extends LitElement {
   }
   select(node) {
     let count = 0;
+    let partialChild = false;
     if (node.children)
       for (let child of node.children) {
-        if (this.select(child)) count++;
+        let obj = this.select(child);
+        partialChild = obj.partial;
+        if (obj.select) count++;
       }
-
-    node.selected = node.selected || count == node?.children?.length
-    return node.selected
+    if (!node?.children) node.selected = node.selected;
+    else node.selected = count == node?.children?.length;
+    if (node?.children && !node.selected) node.partialSelect = partialChild;
+    if (count < node.children?.length && count > 0) node.partialSelect = true;
+    return { select: node.selected, partial: node.partialSelect };
   }
 }
+ƒ
